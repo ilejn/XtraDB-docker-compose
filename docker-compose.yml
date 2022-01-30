@@ -1,0 +1,62 @@
+version: '2'
+services:
+  xtradb-master:
+    container_name: xtradb_master
+    image: 'percona/percona-xtradb-cluster:8.0'
+    environment:
+      - MYSQL_ROOT_PASSWORD=test1234#
+      - CLUSTER_NAME=fsn-xtradb-cluster
+    ports:
+      - 3306:3306
+      - 4567:4567
+      - 4568:4568
+      - 4444:4444
+    volumes:
+      - ./config:/etc/percona-xtradb-cluster.conf.d
+      - ./cert:/cert
+    networks:
+      - fsn-net
+  xtradb-slave1:
+    container_name: xtradb-slave1
+    depends_on:
+      - xtradb-master
+    image: 'percona/percona-xtradb-cluster:8.0'
+    environment:
+      - MYSQL_ROOT_PASSWORD=test1234
+      - CLUSTER_NAME=fsn-xtradb-cluster
+      - CLUSTER_JOIN=xtradb-master
+    volumes:
+      - ./config:/etc/percona-xtradb-cluster.conf.d
+      - ./cert:/cert
+    networks:
+      - fsn-net
+  xtradb-slave2:
+    container_name: xtradb-slave2
+    depends_on:
+      - xtradb-master
+    image: 'percona/percona-xtradb-cluster:8.0'
+    environment:
+      - MYSQL_ROOT_PASSWORD=test1234
+      - CLUSTER_NAME=fsn-xtradb-cluster
+      - CLUSTER_JOIN=xtradb-master
+    volumes:
+      - ./config:/etc/percona-xtradb-cluster.conf.d
+      - ./cert:/cert
+    networks:
+      - fsn-net
+  xtradb-slave3:
+    container_name: xtradb-slave3
+    depends_on:
+      - xtradb-master
+    image: 'percona/percona-xtradb-cluster:8.0'
+    environment:
+      - MYSQL_ROOT_PASSWORD=test1234
+      - CLUSTER_NAME=fsn-xtradb-cluster
+      - CLUSTER_JOIN=xtradb-master
+    volumes:
+      - ./config:/etc/percona-xtradb-cluster.conf.d
+      - ./cert:/cert
+    networks:
+      - fsn-net
+networks:
+  fsn-net:
