@@ -1,4 +1,4 @@
-version: '3.9'
+version: '2'
 services:
   xtradb-master:
     container_name: xtradb-master
@@ -21,13 +21,8 @@ services:
       - ./config:/etc/percona-xtradb-cluster.conf.d
       - ./cert:/cert
       - ./data-master:/var/lib/mysql
-      # - ./nothing:/docker-entrypoint-initdb.d/nothing.sh
-      # - ./grastate.dat:/var/lib/mysql/grastate.dat
-    # restart: always
-    # command: ["/bin/sh", "-c", "sleep 5; mysqld"]
     networks:
       - fsn-net
-    # restart: always
   xtradb-slave1:
     container_name: xtradb-slave1
     depends_on:
@@ -47,8 +42,6 @@ services:
       - ./config:/etc/percona-xtradb-cluster.conf.d
       - ./cert:/cert
       - ./data-slave1:/var/lib/mysql
-      # - ./nothing:/docker-entrypoint-initdb.d/nothing.sh
-    # restart: always
     command: ["/bin/sh", "-c", "sleep 25; mysqld"]
     networks:
       - fsn-net
@@ -71,8 +64,6 @@ services:
       - ./config:/etc/percona-xtradb-cluster.conf.d
       - ./cert:/cert
       - ./data-slave2:/var/lib/mysql
-      # - ./nothing:/docker-entrypoint-initdb.d/nothing.sh
-    # restart: always
     command: ["/bin/sh", "-c", "sleep 25; mysqld"]
     networks:
       - fsn-net
