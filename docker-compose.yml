@@ -1,8 +1,22 @@
 version: '2'
 services:
+  haproxy:
+    container_name: haproxy
+    image: haproxy
+    ports:
+      - "13306:3306"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - fsn-net
+    depends_on:
+      - xtradb-master
+      - xtradb-slave1
+      - xtradb-slave2
+
   xtradb-master:
     container_name: xtradb-master
-    image: 'percona/percona-xtradb-cluster:latest'
+    image: 'percona/percona-xtradb-cluster:8.0'
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - CLUSTER_NAME=fsn-xtradb-cluster
@@ -21,13 +35,14 @@ services:
       - ./config:/etc/percona-xtradb-cluster.conf.d
       - ./cert:/cert
       - ./data-master:/var/lib/mysql
+    command: ["/bin/sh", "-c", "sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/' /var/lib/mysql/grastate.dat; sleep3; mysqld"]
     networks:
       - fsn-net
   xtradb-slave1:
     container_name: xtradb-slave1
     depends_on:
       - xtradb-master
-    image: 'percona/percona-xtradb-cluster:latest'
+    image: 'percona/percona-xtradb-cluster:8.0'
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - CLUSTER_NAME=fsn-xtradb-cluster
@@ -49,7 +64,7 @@ services:
     container_name: xtradb-slave2
     depends_on:
       - xtradb-master
-    image: 'percona/percona-xtradb-cluster:latest'
+    image: 'percona/percona-xtradb-cluster:8.0'
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - CLUSTER_NAME=fsn-xtradb-cluster
