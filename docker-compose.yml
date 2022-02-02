@@ -35,7 +35,7 @@ services:
       - ./config:/etc/percona-xtradb-cluster.conf.d
       - ./cert:/cert
       - ./data-master:/var/lib/mysql
-    command: ["/bin/sh", "-c", "sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/' /var/lib/mysql/grastate.dat; sleep3; mysqld"]
+    restart: always
     networks:
       - fsn-net
   xtradb-slave1:
